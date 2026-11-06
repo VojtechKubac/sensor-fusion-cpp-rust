@@ -1,0 +1,19 @@
+[package]
+name = "fusion_rust"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Rust sensor-fusion pipeline (C++ twin lives in ../cpp)"
+publish = false
+
+[[bin]]
+name = "fusion_rust"
+path = "src/main.rs"
+
+[dependencies]
+# nalgebra lands with the linear KF (ADR 0001).
+
+[profile.release]
+lto = false
+codegen-units = 16
+# opt-level = 3 is the Cargo default; keep LTO off unless a loop report changes it.

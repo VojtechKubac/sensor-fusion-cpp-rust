@@ -20,6 +20,15 @@ _deps/
 # Rust
 **/*.rs.bk
 
+# Simulator generated replay (regenerate with sim/generate_baseline.py)
+sim/out/
+
+# Benchmark / report artefacts (commit writeups only)
+report/**/runs/
+report/**/plots/
+results/
+data/downloaded/
+
 # IDE / agents (local copies; also cloned into feature worktrees by start-worktree.sh)
 .claude/
 .vscode/
@@ -41,9 +50,3 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-
-# Generated results / data downloads (regenerate via scripts)
-results/
-data/downloaded/
-*.pdf
-!docs/**/*.pdf

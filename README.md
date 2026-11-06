@@ -7,23 +7,40 @@ throughput and footprint.
 A shared simulator and benchmark harness drive both implementations so measured
 differences come from the languages and their ecosystems, not from the test setup.
 
-## Repository layout
+License: [MIT](LICENSE).
 
-```text
-sim/      shared simulator, message formats, fault replay files
-cpp/      C++ pipeline (Eigen, CMake)
-rust/     Rust pipeline (nalgebra, Cargo)
-bench/    harness, metrics, one-command experiment runner
-report/   raw results, plots, per-feature-loop writeups
-docs/     ADRs, friction log, architecture notes
-```
+## Layout
 
-This checkout uses a bare repository (`.bare/`) with `main/` as the primary worktree.
-Feature branches live as sibling worktrees next to `main/`.
+| Path | Role |
+| --- | --- |
+| [`sim/`](sim/) | Shared schemas + generators (identical replay for both ports) |
+| [`cpp/`](cpp/) | C++ pipeline (Eigen, CMake) |
+| [`rust/`](rust/) | Rust pipeline (nalgebra, Cargo) |
+| [`bench/`](bench/) | Experiment runners (to come) |
+| [`report/`](report/) | Raw results, plots, per-loop writeups |
+| [`docs/`](docs/) | ADRs, friction log, toolchain pins |
 
-From the directory that contains `.bare`:
+## Build
+
+Pinned versions and flags: [`docs/toolchains.md`](docs/toolchains.md).
 
 ```bash
-./start-worktree.sh <feature-name>   # create/reuse worktree + tmux (Claude | shell)
-./remove-worktree.sh <feature-name>  # kill tmux, remove worktree and local branch
+# Shared baseline input (2D constant-velocity, one position sensor)
+python3 sim/generate_baseline.py --out sim/out/baseline
+
+cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release && cmake --build build/cpp -j
+cargo build --release --manifest-path rust/Cargo.toml
+```
+
+Pipelines are stubs until feature loop 1 (linear KF). The commands above already
+configure and build the placeholders.
+
+## Worktrees
+
+This checkout uses a bare repository (`.bare/`) with `main/` as the primary worktree.
+Feature branches live as sibling directories next to `main/`.
+
+```bash
+./start-worktree.sh <feature-name>
+./remove-worktree.sh <feature-name>
 ```
