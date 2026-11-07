@@ -1,0 +1,18 @@
+# clangd for the C++ port (compile DB from CMake out-of-tree build).
+CompilationDatabase:
+  Directory: ../build/cpp
+
+CompileFlags:
+  Remove:
+    - "-j"
+    - "-j=*"
+    - "-j[0-9]*"
+    - "-j$(nproc)"
+    - "-j $(nproc)"
+
+Index:
+  StandardLibrary: libstdc++
+  Background: Build
+
+Hover:
+  ShowAKA: true

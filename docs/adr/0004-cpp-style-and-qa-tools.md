@@ -21,6 +21,10 @@ not churn later.
   the QA gate).
 - Tidy: curated bug/perf/analyzer set with WarningsAsErrors; Eigen treated as
   third-party (not linted as project code). Config in `cpp/.clang-tidy`.
+- Enable **complexity** checks in that config:
+  `readability-function-cognitive-complexity` (threshold **25**, clang-tidy
+  default) and `readability-function-size` (defaults). Retune when hot paths
+  need it.
 
 **Headers and names:**
 

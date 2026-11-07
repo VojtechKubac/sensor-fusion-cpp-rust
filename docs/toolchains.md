@@ -15,6 +15,9 @@ Record these versions (or any intentional deviation) with every benchmark result
 | Catch2 | **3.5.4** | CMake `FetchContent` tag `v3.5.4` — not Noble apt `3.4.0`. See [ADR 0005](adr/0005-cpp-test-stack.md) |
 | gcovr | **7.0** | Ubuntu apt `gcovr`; coverage reports only (no %-gate yet) |
 | Mull | **0.37.0** / LLVM **18** (`mull-runner-18`) | GitHub `.deb`s — see below. Clang-18 builds only |
+| Sanitizers | ASan+UBSan (Debug/tests); TSan later | CMake option; never on published Release benches. [ADR 0006](adr/0006-cpp-sanitizers-and-analyzers.md) |
+| CPD | **PMD 7.29.0** (`pmd cpd`) | `cpp/` only; report-only until gated. [ADR 0006](adr/0006-cpp-sanitizers-and-analyzers.md) |
+| IWYU | prefer Clang **18**-matched package | `-isystem` for third-party; project TUs only |
 | Rust release profile | Cargo `[profile.release]` defaults (`opt-level = 3`, LTO off unless noted) | Any profile change is a report variable |
 | Matrix libraries | Eigen (C++), nalgebra (Rust) | See [ADR 0001](adr/0001-matrix-libraries.md) |
 | Python (sim generator) | ≥ 3.11, stdlib only | Used to write shared replay files |
@@ -33,8 +36,8 @@ clang-format-18 -i $(find cpp -type f \( -name '*.cpp' -o -name '*.hpp' \))
 ```
 
 clang-tidy needs `compile_commands.json` (CMake `CMAKE_EXPORT_COMPILE_COMMANDS`);
-exact invocation lands with the QA-gate CMake/CI batch. Config paths:
-`cpp/.clang-format`, `cpp/.clang-tidy`.
+exact invocation lands with the QA-gate CMake/CI batch. Config paths (authoritative):
+`cpp/.clang-format`, `cpp/.clang-tidy`, `cpp/.clangd`.
 
 ## Mull (mutation testing)
 
@@ -53,6 +56,27 @@ mull-runner-18 --version
 Requires `libclang-cpp18` and `libllvm18` (pulled in with `clang-18` tooling).
 Prefer the versioned binary `mull-runner-18`. CMake/CI wiring lands after KF
 unit tests exist ([ADR 0005](adr/0005-cpp-test-stack.md)).
+
+## PMD CPD (clone detection)
+
+Needs a JDK on `PATH` (local: Temurin/OpenJDK 25 is fine). Install the pinned
+binary distribution (not an apt snapshot):
+
+```bash
+curl -fsSL -o /tmp/pmd-dist-7.29.0-bin.zip \
+  https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.29.0/pmd-dist-7.29.0-bin.zip
+sudo mkdir -p /opt/pmd
+sudo unzip -q -o /tmp/pmd-dist-7.29.0-bin.zip -d /opt/pmd
+# CLI: /opt/pmd/pmd-bin-7.29.0/bin/pmd
+export PATH="/opt/pmd/pmd-bin-7.29.0/bin:$PATH"
+pmd --version
+```
+
+Report-only scan of the C++ tree (tune `--minimum-tokens` when wiring CI):
+
+```bash
+pmd cpd --dir cpp --language cpp --minimum-tokens 100 --no-fail-on-violation
+```
 
 ## How to build
 

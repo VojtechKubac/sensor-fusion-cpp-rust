@@ -1,0 +1,23 @@
+# Policy: docs/adr/0004-cpp-style-and-qa-tools.md (clang-format-18).
+BasedOnStyle: LLVM
+ColumnLimit: 100
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+PointerAlignment: Left
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+BinPackParameters: false
+BinPackArguments: false
+SortIncludes: CaseInsensitive
+IncludeBlocks: Regroup
+IncludeCategories:
+  # Project / local ("…")
+  - Regex: '^"'
+    Priority: 1
+  # Third-party (Eigen, Catch2, …)
+  - Regex: '^<(Eigen|catch2)/'
+    Priority: 2
+  # C++ standard library and other system headers
+  - Regex: '^<'
+    Priority: 3

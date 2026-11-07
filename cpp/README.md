@@ -4,6 +4,7 @@ Hand-written filter and SPSC queue; Eigen for fixed-size matrix math; CMake
 Release builds with pinned flags (see [`docs/toolchains.md`](../docs/toolchains.md)).
 C++ naming, includes, `.hpp`, and format/tidy pins: [ADR 0004](../docs/adr/0004-cpp-style-and-qa-tools.md).
 Test stack (Catch2, coverage, Mull): [ADR 0005](../docs/adr/0005-cpp-test-stack.md).
+Sanitizers, CPD, IWYU: [ADR 0006](../docs/adr/0006-cpp-sanitizers-and-analyzers.md).
 
 ```bash
 cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release
