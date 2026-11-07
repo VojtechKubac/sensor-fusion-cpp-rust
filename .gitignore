@@ -35,8 +35,10 @@ data/downloaded/
 .cursor/
 .idea/
 .mcp.json
+.cache/
 plans/
 gitignore_vojta
+AGENTS.md
 
 # OS
 .DS_Store
