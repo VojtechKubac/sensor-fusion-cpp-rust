@@ -9,6 +9,7 @@ Record these versions (or any intentional deviation) with every benchmark result
 | C++ standard | C++23 | Set in `cpp/CMakeLists.txt` |
 | CMake | ≥ 3.28 | |
 | CMake build type | `Release` | |
+| C++ warnings | `-Wall -Wextra -Wpedantic -Werror` | Every build config; third-party headers via `-isystem` |
 | C++ release flags | `-O3 -DNDEBUG -march=x86-64-v2` | Not `-march=native` — results must be portable across similar desktops |
 | clang-format | **18** (`clang-format-18`) | Ubuntu package `clang-format-18`. Do not use unversioned `clang-format` on PATH |
 | clang-tidy | **18** (`clang-tidy-18`) | Ubuntu package `clang-tidy-18`. Style policy: [ADR 0004](adr/0004-cpp-style-and-qa-tools.md) |
@@ -19,7 +20,8 @@ Record these versions (or any intentional deviation) with every benchmark result
 | CPD | **PMD 7.29.0** (`pmd cpd`) | `cpp/` only; report-only until gated. [ADR 0006](adr/0006-cpp-sanitizers-and-analyzers.md) |
 | IWYU | prefer Clang **18**-matched package | `-isystem` for third-party; project TUs only |
 | Rust release profile | Cargo `[profile.release]` defaults (`opt-level = 3`, LTO off unless noted) | Any profile change is a report variable |
-| Matrix libraries | Eigen (C++), nalgebra (Rust) | See [ADR 0001](adr/0001-matrix-libraries.md) |
+| Eigen | **3.4.0** | CMake `FetchContent` tag `3.4.0` (download only, header-only imported target). See [ADR 0001](adr/0001-matrix-libraries.md) |
+| nalgebra | TBD | See [ADR 0001](adr/0001-matrix-libraries.md) |
 | Python (sim generator) | ≥ 3.11, stdlib only | Used to write shared replay files |
 
 ## C++ format and tidy
@@ -93,4 +95,4 @@ ctest --test-dir build/cpp -L unit --output-on-failure
 cargo build --release --manifest-path rust/Cargo.toml
 ```
 
-Until the pipelines exist, the CMake/Cargo projects are stubs that configure and build a placeholder binary (and a Catch2 harness test) so the commands above stay valid. Catch2 **v3.5.4** is pulled with FetchContent on first configure (needs network once).
+Until the pipelines exist, the CMake/Cargo projects are stubs that configure and build a placeholder binary (and a Catch2 harness test) so the commands above stay valid. Eigen **3.4.0** and Catch2 **v3.5.4** are pulled with FetchContent on first configure (needs network once).

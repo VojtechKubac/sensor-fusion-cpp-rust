@@ -6,7 +6,7 @@ function(fusion_cpp_add_test name label)
     ${name}
     PRIVATE
       Catch2::Catch2WithMain
-      fusion_cpp_flags
+      fusion_core
   )
   add_test(NAME ${name} COMMAND ${name})
   set_tests_properties(${name} PROPERTIES LABELS "${label}")

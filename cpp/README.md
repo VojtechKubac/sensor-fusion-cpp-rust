@@ -17,5 +17,9 @@ ctest --test-dir build/cpp -L unit --output-on-failure
 cmake --build build/cpp --target test_harness && ./build/cpp/tests/test_harness
 ```
 
+Targets: `fusion_core` (library; headers under `include/fusion/`, links Eigen
+3.4.0 via FetchContent) and `fusion_cpp` (thin `main`). Tests link `fusion_core`.
+Warnings are errors in every build config.
+
 Loop 1 will add the linear KF, one sensor consumer, and latency probes. Until
 then this package builds a placeholder binary so the toolchain pin is exercisable.
