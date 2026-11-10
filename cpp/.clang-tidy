@@ -15,6 +15,7 @@ Checks: >
   cppcoreguidelines-no-malloc,
   misc-unused-using-decls,
   misc-redundant-expression,
+  llvm-header-guard,
   -bugprone-easily-swappable-parameters,
   -bugprone-narrowing-conversions,
   -bugprone-unchecked-optional-access,
@@ -49,6 +50,9 @@ CheckOptions:
     value: camelBack
   - key: readability-identifier-naming.MemberSuffix
     value: "_"
+  # Public data (plain aggregates) has no suffix; private/protected keep "_".
+  - key: readability-identifier-naming.PublicMemberCase
+    value: camelBack
   # Named constants (e.g. ProcessNoise); locals stay camelBack via LocalConstantCase.
   - key: readability-identifier-naming.ConstantCase
     value: CamelCase

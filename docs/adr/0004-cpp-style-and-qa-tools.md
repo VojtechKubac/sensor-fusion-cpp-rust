@@ -31,14 +31,19 @@ not churn later.
 - Header extension: **`.hpp`** (C++-only tree; no C API).
 - File names: **`snake_case`** (e.g. `linear_kf.hpp`).
 - Types: `CamelCase`. Functions / methods: `camelBack`. Members: `camelBack_`
-  with trailing underscore. Named constants: **PascalCase** (e.g.
-  `ProcessNoise`). Macros only: `SCREAMING_SNAKE`.
+  with trailing underscore; public members of plain aggregates: `camelBack`.
+  Named constants: **PascalCase** (e.g. `ProcessNoise`). Macros only:
+  `SCREAMING_SNAKE`.
 
 **Includes:**
 
 - `#include <…>` — C++ standard library and third-party (Eigen, Catch2, …).
 - `#include "…"` — project / local headers (prefer `"fusion/…"` from an include
   root; no `"../…"`).
+- Headers use **classic include guards** (not `#pragma once`), named from the
+  path under `cpp/include/`: `fusion/kf/types.hpp` → `FUSION_KF_TYPES_HPP`;
+  close with `#endif // FUSION_KF_TYPES_HPP`. Enforced by clang-tidy
+  `llvm-header-guard`.
 
 ## Consequences
 
