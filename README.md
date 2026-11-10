@@ -28,7 +28,7 @@ Pinned versions and flags: [`docs/toolchains.md`](docs/toolchains.md).
 # Shared baseline input (2D constant-velocity, one position sensor)
 python3 sim/generate_baseline.py --out sim/out/baseline
 
-cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release && cmake --build build/cpp -j
+(cd cpp && cmake --workflow --preset release)   # presets: cpp/README.md
 cargo build --release --manifest-path rust/Cargo.toml
 ```
 

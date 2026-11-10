@@ -86,10 +86,8 @@ pmd cpd --dir cpp --language cpp --minimum-tokens 100 --no-fail-on-violation
 # Shared baseline input (one sensor + ground truth)
 python3 sim/generate_baseline.py --out sim/out/baseline
 
-# C++ (after loop-1 code lands)
-cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release
-cmake --build build/cpp -j
-ctest --test-dir build/cpp -L unit --output-on-failure
+# C++ (cpp/CMakePresets.json: configure + build + test)
+(cd cpp && cmake --workflow --preset release)
 
 # Rust
 cargo build --release --manifest-path rust/Cargo.toml

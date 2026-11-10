@@ -7,15 +7,22 @@ Test stack (Catch2, coverage, Mull): [ADR 0005](../docs/adr/0005-cpp-test-stack.
 Sanitizers, CPD, IWYU: [ADR 0006](../docs/adr/0006-cpp-sanitizers-and-analyzers.md).
 
 ```bash
-cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release
-cmake --build build/cpp -j
-./build/cpp/fusion_cpp --help
+# Presets live in cpp/CMakePresets.json; run from cpp/.
+cd cpp
+cmake --workflow --preset debug     # configure + build + test (build/cpp/debug)
+cmake --workflow --preset release   # same with pinned Release flags (build/cpp/release)
+cmake --build --preset debug        # rebuild only
+ctest --preset debug                # tests only
+../build/cpp/release/fusion_cpp --help
 
-# Unit tests (Catch2 v3.5.4 via FetchContent)
-ctest --test-dir build/cpp -L unit --output-on-failure
-# Single exe during development:
-cmake --build build/cpp --target test_harness && ./build/cpp/tests/test_harness
+# Single test exe during development:
+cmake --build --preset debug --target test_constant_velocity \
+  && ../build/cpp/debug/tests/test_constant_velocity
 ```
+
+Builds are serial with Makefiles unless `CMAKE_BUILD_PARALLEL_LEVEL` is set
+(e.g. `export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc)` in your shell profile).
+clangd reads the Debug compile DB (`cpp/.clangd`).
 
 Targets: `fusion_core` (library; headers under `include/fusion/`, links Eigen
 3.4.0 via FetchContent) and `fusion_cpp` (thin `main`). Tests link `fusion_core`.
