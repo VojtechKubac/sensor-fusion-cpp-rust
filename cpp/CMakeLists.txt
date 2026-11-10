@@ -36,11 +36,11 @@ target_compile_options(
     $<$<CONFIG:Release>:-O3;-DNDEBUG;-march=x86-64-v2>
 )
 
-# Filter, queue and replay code. INTERFACE until the first .cpp lands; switch
-# to STATIC then. Headers live under include/fusion/ ("fusion/…", ADR 0004).
-add_library(fusion_core INTERFACE)
-target_include_directories(fusion_core INTERFACE include)
-target_link_libraries(fusion_core INTERFACE Eigen3::Eigen fusion_cpp_flags)
+# Filter, queue and replay code. Headers live under include/fusion/
+# ("fusion/…", ADR 0004). Flags are PUBLIC so main and tests get them too.
+add_library(fusion_core STATIC src/model/constant_velocity.cpp)
+target_include_directories(fusion_core PUBLIC include)
+target_link_libraries(fusion_core PUBLIC Eigen3::Eigen fusion_cpp_flags)
 
 add_executable(fusion_cpp src/main.cpp)
 target_link_libraries(fusion_cpp PRIVATE fusion_core)
