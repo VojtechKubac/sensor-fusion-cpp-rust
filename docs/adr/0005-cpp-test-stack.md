@@ -14,8 +14,10 @@ tests. Benchmarks stay out of this ADR until a working pipeline exists.
 **Framework:** Catch2 **v3.5.4**, obtained via CMake `FetchContent` (pinned tag).
 Do not rely on Ubuntu’s `catch2` package (Noble ships 3.4.0). Each test
 translation unit is its own executable, linked with `Catch2::Catch2WithMain`
-(Catch owns `main`; tests are `TEST_CASE`s only). No `catch_discover_tests` for
-now — one CTest entry per executable. Filter inside an exe with Catch’s CLI.
+(Catch owns `main`; tests are `TEST_CASE`s only). `catch_discover_tests`
+registers every `TEST_CASE` as its own CTest entry (`<exe>:<case>`, labels
+kept) so IDE test runners can list and run cases individually (amended
+2026-11-11; previously one CTest entry per executable).
 
 **Layout:** `cpp/tests/unit/` and `cpp/tests/integration/`, CTest labels `unit`
 and `integration`. Integration tests also use Catch2; they exercise boundaries
