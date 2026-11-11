@@ -45,6 +45,11 @@ public:
   [[nodiscard]] const StateCovariance& covariance() const { return p_; }
 
 private:
+  // Posterior P from the prior p_ using the configured CovarianceUpdate form.
+  [[nodiscard]] StateCovariance updatedCovariance(const KalmanGain& k,
+                                                  const MeasurementMatrix& h,
+                                                  const MeasurementCovariance& r) const;
+
   StateVector x_;
   StateCovariance p_;
   CovarianceUpdate covarianceUpdate_;

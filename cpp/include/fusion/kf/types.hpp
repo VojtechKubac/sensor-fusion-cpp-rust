@@ -27,6 +27,7 @@ using StateTransition = Eigen::Matrix<double, StateDim, StateDim>;
 using MeasurementVector = Eigen::Matrix<double, MeasurementDim, 1>;
 using MeasurementCovariance = Eigen::Matrix<double, MeasurementDim, MeasurementDim>;
 using MeasurementMatrix = Eigen::Matrix<double, MeasurementDim, StateDim>;
+using KalmanGain = Eigen::Matrix<double, StateDim, MeasurementDim>;
 
 } // namespace fusion::kf
 
