@@ -1,4 +1,4 @@
-# Policy: docs/adr/0004-cpp-style-and-qa-tools.md (clang-format-18).
+# Policy: docs/adr/0004-cpp-style-and-qa-tools.md (clang-format-20).
 BasedOnStyle: LLVM
 ColumnLimit: 100
 IndentWidth: 2

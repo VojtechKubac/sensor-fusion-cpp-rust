@@ -31,7 +31,7 @@ report-only in CI at first (no minimum-% gate). Use a non-Release build — neve
 mix with published bench flags.
 
 **Mutation testing:** Mull **0.37.0** with the **LLVM 18** plugin
-(`mull-runner-18`). Mutate Clang-18 builds only. Wire runners after KF unit
+(`mull-runner-18`) (LLVM major superseded by [ADR 0007](0007-llvm-20-toolchain.md): **20**). Mutate Clang-18 builds only. Wire runners after KF unit
 tests exist; until then the pin and install steps live in
 [toolchains.md](../toolchains.md).
 

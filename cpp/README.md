@@ -11,6 +11,7 @@ Sanitizers, CPD, IWYU: [ADR 0006](../docs/adr/0006-cpp-sanitizers-and-analyzers.
 cd cpp
 cmake --workflow --preset debug     # configure + build + test (build/cpp/debug)
 cmake --workflow --preset release   # same with pinned Release flags (build/cpp/release)
+cmake --workflow --preset debug-clang # Debug with clang++-20 (build/cpp/debug-clang)
 cmake --build --preset debug        # rebuild only
 ctest --preset debug                # tests only
 ../build/cpp/release/fusion_cpp --help

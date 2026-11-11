@@ -5,20 +5,20 @@ Record these versions (or any intentional deviation) with every benchmark result
 | Tool | Pin | Notes |
 | --- | --- | --- |
 | Rust | `1.97.1` via [`rust-toolchain.toml`](../rust-toolchain.toml) | `cargo build --release` in `rust/` |
-| C++ compiler | GCC 13 (Ubuntu 24.04 default) or Clang 18+ | Document which binary produced a result |
+| C++ compiler | GCC 13 (Ubuntu 24.04 default) or Clang **20** | Document which binary produced a result |
 | C++ standard | C++23 | Set in `cpp/CMakeLists.txt` |
 | CMake | ≥ 3.28 | |
 | CMake build type | `Release` | |
 | C++ warnings | `-Wall -Wextra -Wpedantic -Werror` | Every build config; third-party headers via `-isystem` |
 | C++ release flags | `-O3 -DNDEBUG -march=x86-64-v2` | Not `-march=native` — results must be portable across similar desktops |
-| clang-format | **18** (`clang-format-18`) | Ubuntu package `clang-format-18`. Do not use unversioned `clang-format` on PATH |
-| clang-tidy | **18** (`clang-tidy-18`) | Ubuntu package `clang-tidy-18`. Style policy: [ADR 0004](adr/0004-cpp-style-and-qa-tools.md) |
+| clang-format | **20** (`clang-format-20`) | Ubuntu package `clang-format-20`. Do not use unversioned `clang-format` on PATH |
+| clang-tidy | **20** (`clang-tidy-20`) | Ubuntu package `clang-tidy-20`. Style policy: [ADR 0004](adr/0004-cpp-style-and-qa-tools.md) |
 | Catch2 | **3.5.4** | CMake `FetchContent` tag `v3.5.4` — not Noble apt `3.4.0`. See [ADR 0005](adr/0005-cpp-test-stack.md) |
 | gcovr | **7.0** | Ubuntu apt `gcovr`; coverage reports only (no %-gate yet) |
-| Mull | **0.37.0** / LLVM **18** (`mull-runner-18`) | GitHub `.deb`s — see below. Clang-18 builds only |
+| Mull | **0.37.0** / LLVM **20.1.2** (`mull-runner-20`) | GitHub `.deb`s — see below. Clang-20 builds only |
 | Sanitizers | ASan+UBSan (Debug/tests); TSan later | CMake option; never on published Release benches. [ADR 0006](adr/0006-cpp-sanitizers-and-analyzers.md) |
 | CPD | **PMD 7.29.0** (`pmd cpd`) | `cpp/` only; report-only until gated. [ADR 0006](adr/0006-cpp-sanitizers-and-analyzers.md) |
-| IWYU | prefer Clang **18**-matched package | `-isystem` for third-party; project TUs only |
+| IWYU | prefer Clang **20**-matched package | `-isystem` for third-party; project TUs only |
 | Rust release profile | Cargo `[profile.release]` defaults (`opt-level = 3`, LTO off unless noted) | Any profile change is a report variable |
 | Eigen | **3.4.0** | CMake `FetchContent` tag `3.4.0` (download only, header-only imported target). See [ADR 0001](adr/0001-matrix-libraries.md) |
 | nalgebra | TBD | See [ADR 0001](adr/0001-matrix-libraries.md) |
@@ -27,14 +27,14 @@ Record these versions (or any intentional deviation) with every benchmark result
 ## C++ format and tidy
 
 ```bash
-# Install if missing (Ubuntu 24.04)
-sudo apt install clang-format-18 clang-tidy-18
+# Install the whole pinned toolchain (Ubuntu 24.04)
+./tools/install-cpp-toolchain.sh
 
 # Format check (CI will use the same binary)
-clang-format-18 --dry-run -Werror $(find cpp -type f \( -name '*.cpp' -o -name '*.hpp' \))
+clang-format-20 --dry-run -Werror $(find cpp -type f \( -name '*.cpp' -o -name '*.hpp' \))
 
 # Apply locally
-clang-format-18 -i $(find cpp -type f \( -name '*.cpp' -o -name '*.hpp' \))
+clang-format-20 -i $(find cpp -type f \( -name '*.cpp' -o -name '*.hpp' \))
 ```
 
 clang-tidy needs `compile_commands.json` (CMake `CMAKE_EXPORT_COMPILE_COMMANDS`);
@@ -43,21 +43,17 @@ exact invocation lands with the QA-gate CMake/CI batch. Config paths (authoritat
 
 ## Mull (mutation testing)
 
-Not in Ubuntu apt. Install **both** release packages in one transaction
-(`mull-18` depends on `mull (= 0.37.0)`):
+Not in Ubuntu apt: `tools/install-cpp-toolchain.sh` installs the core `mull`
+and `mull-20` `.deb`s from the GitHub release in one transaction (`mull-20`
+depends on `mull (= 0.37.0)`). Requires `libclang-cpp20` / `libllvm20` (pulled
+in with the `clang-20` tooling). Use the versioned binary `mull-runner-20`.
+CMake/CI wiring lands after KF unit tests exist ([ADR 0005](adr/0005-cpp-test-stack.md)).
 
-```bash
-curl -fsSL -o /tmp/mull-base.deb \
-  https://github.com/mull-project/mull/releases/download/0.37.0/Mull-0.37.0-ubuntu-amd64-24.04.deb
-curl -fsSL -o /tmp/mull-18.deb \
-  https://github.com/mull-project/mull/releases/download/0.37.0/Mull-18-0.37.0-LLVM-18.1.3-ubuntu-amd64-24.04.deb
-sudo apt install /tmp/mull-base.deb /tmp/mull-18.deb
-mull-runner-18 --version
-```
+## CI
 
-Requires `libclang-cpp18` and `libllvm18` (pulled in with `clang-18` tooling).
-Prefer the versioned binary `mull-runner-18`. CMake/CI wiring lands after KF
-unit tests exist ([ADR 0005](adr/0005-cpp-test-stack.md)).
+CI must run on `runs-on: ubuntu-24.04` (not `ubuntu-latest`) and install tools
+with `tools/install-cpp-toolchain.sh`, so local and CI pins cannot drift.
+LLVM major bump rationale: [ADR 0007](adr/0007-llvm-20-toolchain.md).
 
 ## PMD CPD (clone detection)
 

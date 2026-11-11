@@ -15,7 +15,7 @@ not churn later.
 
 **Tools (see also [toolchains.md](../toolchains.md)):**
 
-- Pin **clang-format-18** and **clang-tidy-18** (Ubuntu 24.04 packages).
+- Pin **clang-format-18** and **clang-tidy-18** (Ubuntu 24.04 packages) (LLVM major superseded by [ADR 0007](0007-llvm-20-toolchain.md): **20**).
 - Always invoke the versioned binaries; do not rely on unversioned names on PATH.
 - Format style: **LLVM**-based, details live in `cpp/.clang-format` (to land with
   the QA gate).

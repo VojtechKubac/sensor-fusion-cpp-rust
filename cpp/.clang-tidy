@@ -1,5 +1,5 @@
 ---
-# Policy: docs/adr/0004-cpp-style-and-qa-tools.md (clang-tidy-18).
+# Policy: docs/adr/0004-cpp-style-and-qa-tools.md (clang-tidy-20).
 Checks: >
   bugprone-*,
   clang-analyzer-*,

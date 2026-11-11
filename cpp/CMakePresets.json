@@ -18,11 +18,18 @@
       "displayName": "Release (pinned flags, published numbers)",
       "inherits": "base",
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "debug-clang",
+      "displayName": "Debug with Clang 20 (second compiler, Mull later)",
+      "inherits": "debug",
+      "cacheVariables": { "CMAKE_CXX_COMPILER": "clang++-20" }
     }
   ],
   "buildPresets": [
     { "name": "debug", "configurePreset": "debug" },
-    { "name": "release", "configurePreset": "release" }
+    { "name": "release", "configurePreset": "release" },
+    { "name": "debug-clang", "configurePreset": "debug-clang" }
   ],
   "testPresets": [
     {
@@ -31,7 +38,8 @@
       "output": { "outputOnFailure": true }
     },
     { "name": "debug", "inherits": "base", "configurePreset": "debug" },
-    { "name": "release", "inherits": "base", "configurePreset": "release" }
+    { "name": "release", "inherits": "base", "configurePreset": "release" },
+    { "name": "debug-clang", "inherits": "base", "configurePreset": "debug-clang" }
   ],
   "workflowPresets": [
     {
@@ -48,6 +56,14 @@
         { "type": "configure", "name": "release" },
         { "type": "build", "name": "release" },
         { "type": "test", "name": "release" }
+      ]
+    },
+    {
+      "name": "debug-clang",
+      "steps": [
+        { "type": "configure", "name": "debug-clang" },
+        { "type": "build", "name": "debug-clang" },
+        { "type": "test", "name": "debug-clang" }
       ]
     }
   ]

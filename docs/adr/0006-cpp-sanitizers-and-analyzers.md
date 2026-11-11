@@ -39,4 +39,4 @@ Mull remains ADR 0005 — wire after KF unit tests exist.
 
 - CI will need at least one sanitizer test job distinct from Release.
 - CPD/IWYU jobs can start report-only; failing the gate is a later switch.
-- IWYU version should track Clang 18 where packages allow.
+- IWYU version should track Clang 18 where packages allow (LLVM major superseded by [ADR 0007](0007-llvm-20-toolchain.md): **20**).
