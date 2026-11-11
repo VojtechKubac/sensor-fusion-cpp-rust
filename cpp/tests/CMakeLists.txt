@@ -14,4 +14,5 @@ endfunction()
 
 fusion_cpp_add_test(test_harness unit unit/test_harness.cpp)
 fusion_cpp_add_test(test_constant_velocity unit unit/test_constant_velocity.cpp)
+fusion_cpp_add_test(test_linear_kf unit unit/test_linear_kf.cpp)
 # integration/ — add targets here when replay/SPSC tests land.

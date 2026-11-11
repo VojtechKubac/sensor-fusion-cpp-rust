@@ -38,7 +38,7 @@ target_compile_options(
 
 # Filter, queue and replay code. Headers live under include/fusion/
 # ("fusion/…", ADR 0004). Flags are PUBLIC so main and tests get them too.
-add_library(fusion_core STATIC src/model/constant_velocity.cpp)
+add_library(fusion_core STATIC src/kf/linear_kf.cpp src/model/constant_velocity.cpp)
 target_include_directories(fusion_core PUBLIC include)
 target_link_libraries(fusion_core PUBLIC Eigen3::Eigen fusion_cpp_flags)
 
