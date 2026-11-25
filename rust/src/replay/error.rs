@@ -1,6 +1,8 @@
 use std::fmt;
 use std::path::PathBuf;
 
+use super::csv::CsvError;
+
 #[derive(Debug)]
 pub enum ReplayError {
     Io {
@@ -11,11 +13,9 @@ pub enum ReplayError {
         path: PathBuf,
         source: serde_json::Error,
     },
-    /// Header mismatch, wrong column count or a non-numeric field.
     Csv {
         path: PathBuf,
-        line: usize,
-        reason: String,
+        error: CsvError,
     },
     /// Files parse but do not match what this port expects.
     Unsupported(String),
@@ -26,7 +26,9 @@ impl fmt::Display for ReplayError {
         match self {
             Self::Io { path, source } => write!(f, "{}: {source}", path.display()),
             Self::Json { path, source } => write!(f, "{}: {source}", path.display()),
-            Self::Csv { path, line, reason } => write!(f, "{}:{line}: {reason}", path.display()),
+            Self::Csv { path, error } => {
+                write!(f, "{}:{}: {:?}", path.display(), error.line, error.kind)
+            }
             Self::Unsupported(reason) => write!(f, "unsupported replay: {reason}"),
         }
     }

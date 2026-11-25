@@ -1,6 +1,6 @@
 //! Reads the shared replay files described in sim/SCHEMA.md.
 
-mod csv;
+pub mod csv;
 mod error;
 mod meta;
 mod samples;

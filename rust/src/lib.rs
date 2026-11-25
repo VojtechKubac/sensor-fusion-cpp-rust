@@ -2,5 +2,6 @@
 
 pub mod kf;
 pub mod model;
+pub mod pipeline;
 pub mod replay;
 pub mod time;
