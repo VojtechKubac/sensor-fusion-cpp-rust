@@ -1,3 +1,8 @@
+# Root package (fusion_rust: library + benchmark binary) plus the viewer.
+# fusion_viz is the only member that links Rerun.
+[workspace]
+members = ["fusion_viz"]
+
 [package]
 name = "fusion_rust"
 version = "0.1.0"

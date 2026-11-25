@@ -1,0 +1,11 @@
+[package]
+name = "fusion_viz"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Rerun viewer for the Rust sensor-fusion replay (not benchmarked)"
+publish = false
+
+[dependencies]
+fusion_rust = { path = ".." }
+rerun = "=0.43.2"
