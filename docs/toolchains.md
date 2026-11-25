@@ -4,7 +4,7 @@ Record these versions (or any intentional deviation) with every benchmark result
 
 | Tool | Pin | Notes |
 | --- | --- | --- |
-| Rust | `1.97.1` via [`rust-toolchain.toml`](../rust-toolchain.toml) | `cargo build --release` in `rust/` |
+| Rust | `1.98.1` via [`rust-toolchain.toml`](../rust-toolchain.toml) | `cargo build --release` in `rust/` |
 | C++ compiler | GCC 13 (Ubuntu 24.04 default) or Clang **20** | Document which binary produced a result |
 | C++ standard | C++23 | Set in `cpp/CMakeLists.txt` |
 | CMake | ≥ 3.28 | |
@@ -21,7 +21,9 @@ Record these versions (or any intentional deviation) with every benchmark result
 | IWYU | prefer Clang **20**-matched package | `-isystem` for third-party; project TUs only |
 | Rust release profile | Cargo `[profile.release]` defaults (`opt-level = 3`, LTO off unless noted) | Any profile change is a report variable |
 | Eigen | **3.4.0** | CMake `FetchContent` tag `3.4.0` (download only, header-only imported target). See [ADR 0001](adr/0001-matrix-libraries.md) |
-| nalgebra | TBD | See [ADR 0001](adr/0001-matrix-libraries.md) |
+| nalgebra | **0.35.0** (`default-features = false`, `std`) | Exact pin in `rust/Cargo.toml`. See [ADR 0001](adr/0001-matrix-libraries.md) |
+| serde / serde_json | **1.0.229** (`derive`) / **1.0.154** | Replay metadata (`meta.json`) only, parsed once at startup |
+| Rerun | **0.43.2** (`rerun` crate + `rerun-cli` viewer, versions must match) | Visualization only, never linked into the benchmarked `fusion_rust`. Needs rustc ≥ 1.98 |
 | Python (sim generator) | ≥ 3.11, stdlib only | Used to write shared replay files |
 
 ## C++ format and tidy
