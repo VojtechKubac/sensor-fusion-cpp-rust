@@ -18,23 +18,24 @@ constexpr std::array<AxisIndices, 2> Axes{{
 
 } // namespace
 
-kf::StateTransition transition(double dtS) {
+kf::StateTransition transition(Seconds dt) {
   kf::StateTransition f = kf::StateTransition::Identity();
   for (const AxisIndices& axis : Axes) {
-    f(axis.position, axis.velocity) = dtS;
+    f(axis.position, axis.velocity) = dt.count();
   }
   return f;
 }
 
-kf::StateCovariance processNoise(double dtS, double accelerationNoiseDensity) {
-  const double dt2 = dtS * dtS;
-  const double dt3 = dt2 * dtS;
+kf::StateCovariance processNoise(Seconds dt, double accelerationNoiseDensity) {
+  const double dt1 = dt.count();
+  const double dt2 = dt1 * dt1;
+  const double dt3 = dt2 * dt1;
   kf::StateCovariance q = kf::StateCovariance::Zero();
   for (const AxisIndices& axis : Axes) {
     q(axis.position, axis.position) = dt3 / 3.0;
     q(axis.position, axis.velocity) = dt2 / 2.0;
     q(axis.velocity, axis.position) = dt2 / 2.0;
-    q(axis.velocity, axis.velocity) = dtS;
+    q(axis.velocity, axis.velocity) = dt1;
   }
   return accelerationNoiseDensity * q;
 }

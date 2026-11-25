@@ -15,7 +15,7 @@ TEST_CASE("transition advances position by velocity * dt", "[model][unit]") {
   const kf::StateVector state{1.0, 2.0, 3.0, 4.0};
   const kf::StateVector expected{2.5, 4.0, 3.0, 4.0};
 
-  const kf::StateVector actual = model::transition(0.5) * state;
+  const kf::StateVector actual = model::transition(fusion::Seconds{0.5}) * state;
 
   CAPTURE(actual.transpose());
   REQUIRE(actual.isApprox(expected, Tolerance));
@@ -29,7 +29,7 @@ TEST_CASE("processNoise matches the white-noise-acceleration closed form", "[mod
       0.25, 0.0, 1.0, 0.0,                //
       0.0, 0.25, 0.0, 1.0;
 
-  const kf::StateCovariance actual = model::processNoise(0.5, 2.0);
+  const kf::StateCovariance actual = model::processNoise(fusion::Seconds{0.5}, 2.0);
 
   CAPTURE(actual);
   REQUIRE(actual.isApprox(expected, Tolerance));
@@ -37,13 +37,13 @@ TEST_CASE("processNoise matches the white-noise-acceleration closed form", "[mod
 
 TEST_CASE("processNoise is consistent when a step is split in two", "[model][unit]") {
   // Continuous-time model: Q(2dt) = F(dt) Q(dt) F(dt)^T + Q(dt).
-  const double dtS = 0.1;
+  const fusion::Seconds dt{0.1};
   const double q = 3.0;
-  const kf::StateTransition f = model::transition(dtS);
-  const kf::StateCovariance halfStep = model::processNoise(dtS, q);
+  const kf::StateTransition f = model::transition(dt);
+  const kf::StateCovariance halfStep = model::processNoise(dt, q);
 
   const kf::StateCovariance composed = f * halfStep * f.transpose() + halfStep;
-  const kf::StateCovariance fullStep = model::processNoise(2.0 * dtS, q);
+  const kf::StateCovariance fullStep = model::processNoise(2.0 * dt, q);
 
   CAPTURE(composed, fullStep);
   REQUIRE(composed.isApprox(fullStep, Tolerance));

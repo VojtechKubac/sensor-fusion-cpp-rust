@@ -34,6 +34,10 @@ not churn later.
   with trailing underscore; public members of plain aggregates: `camelBack`.
   Named constants: **PascalCase** (e.g. `ProcessNoise`). Macros only:
   `SCREAMING_SNAKE`.
+- Filter math keeps textbook letters (`x`, `p`, `f`, `q`, `h`, `r`, `k`, `y`);
+  other code uses descriptive names. Time is typed as `fusion::Seconds`
+  (`std::chrono::duration<double>`, `fusion/time.hpp`); other physical
+  quantities carry a unit suffix (`noiseStdM`) or a unit comment.
 
 **Includes:**
 

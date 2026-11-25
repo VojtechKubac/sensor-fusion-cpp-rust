@@ -21,7 +21,8 @@ kf::StateCovariance diagonalCovariance() {
 // Filter after one CV predict, so P has position-velocity correlation.
 kf::LinearKalmanFilter predictedFilter(kf::CovarianceUpdate form) {
   kf::LinearKalmanFilter filter{kf::StateVector{1.0, 2.0, 3.0, 4.0}, diagonalCovariance(), form};
-  filter.predict(model::transition(0.1), model::processNoise(0.1, 1.0));
+  const fusion::Seconds dt{0.1};
+  filter.predict(model::transition(dt), model::processNoise(dt, 1.0));
   return filter;
 }
 
@@ -40,7 +41,7 @@ TEST_CASE("predict without process noise propagates state and covariance", "[kf]
       1.5, 0.0, 3.0, 0.0,                    //
       0.0, 2.0, 0.0, 4.0;
 
-  filter.predict(model::transition(0.5), kf::StateCovariance::Zero());
+  filter.predict(model::transition(fusion::Seconds{0.5}), kf::StateCovariance::Zero());
 
   CAPTURE(filter.state().transpose(), filter.covariance());
   REQUIRE(filter.state().isApprox(expectedState, Tolerance));
