@@ -15,7 +15,7 @@ License: [MIT](LICENSE).
 | --- | --- |
 | [`sim/`](sim/) | Shared schemas + generators (identical replay for both ports) |
 | [`cpp/`](cpp/) | C++ pipeline (Eigen, CMake) |
-| [`rust/`](rust/) | Rust pipeline (nalgebra, Cargo) |
+| [`rust/`](rust/) | Rust pipeline (nalgebra, Cargo) + Rerun viewer (`fusion_viz`) |
 | [`bench/`](bench/) | Experiment runners (to come) |
 | [`report/`](report/) | Raw results, plots, per-loop writeups |
 | [`docs/`](docs/) | ADRs, friction log, toolchain pins |
@@ -32,8 +32,16 @@ python3 sim/generate_baseline.py --out sim/out/baseline
 cargo build --release --manifest-path rust/Cargo.toml
 ```
 
-Pipelines are stubs until feature loop 1 (linear KF). The commands above already
-configure and build the placeholders.
+## Watch a replay
+
+```bash
+cargo install rerun-cli --locked --version 0.43.2      # viewer, once
+cargo run --release --manifest-path rust/Cargo.toml -p fusion_viz -- --realtime
+```
+
+Opens the [Rerun](https://rerun.io) viewer and streams the Rust linear KF over
+the baseline replay; the run is also saved to `report/out/loop1/loop1.rrd`.
+Details: [`rust/README.md`](rust/README.md#viewer-rerun).
 
 ## Worktrees
 

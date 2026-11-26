@@ -8,7 +8,7 @@ cargo run --release --manifest-path rust/Cargo.toml -- sim/out/baseline
 ```
 
 Replays the simulator files through the linear KF and prints position RMSE
-and mean NIS. Same design as `cpp/`; for loop 1 the Rust port leads.
+and mean NIS. Same design, state layout and replay files as `cpp/`.
 
 ## Viewer (Rerun)
 
