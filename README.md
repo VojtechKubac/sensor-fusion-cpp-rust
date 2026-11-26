@@ -9,6 +9,17 @@ differences come from the languages and their ecosystems, not from the test setu
 
 License: [MIT](LICENSE).
 
+## Demo
+
+The Rust linear Kalman filter replaying the baseline scenario live in
+[Rerun](https://rerun.io), with two process-noise tunings side by side
+(blue `q=0.01` smooth, yellow `q=1` responsive): trajectory, error relative to
+ground truth with 2σ ellipses, and error / σ / NIS plots.
+
+https://github.com/user-attachments/assets/3d4a6d8f-a963-4f53-a598-faf58c8e55ff
+
+Reproduce: [Watch a replay](#watch-a-replay).
+
 ## Layout
 
 | Path | Role |
