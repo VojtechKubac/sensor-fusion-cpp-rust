@@ -1,5 +1,6 @@
 //! Streams the linear-KF replay to a spawned Rerun viewer and an `.rrd` file.
 
+mod blueprint;
 mod ellipse;
 mod log;
 
@@ -13,14 +14,18 @@ use fusion_rust::replay::{load_ground_truth, load_meta, load_sensor};
 use fusion_rust::time::Seconds;
 use rerun::sink::{FileSink, GrpcSink};
 
-const USAGE: &str = "Usage: fusion_viz [--realtime] [--save FILE.rrd] [REPLAY_DIR]\n  \
-    defaults: REPLAY_DIR=sim/out/baseline, FILE=report/out/loop1/loop1.rrd";
+const USAGE: &str = "Usage: fusion_viz [--realtime] [--q Q] [--save FILE.rrd] [REPLAY_DIR]\n  \
+    defaults: REPLAY_DIR=sim/out/baseline, FILE=report/out/loop1/loop1.rrd, Q from FilterTuning";
+/// Shared by every run, so the viewer merges runs into one recording and
+/// their estimates overlay in the same views.
+const RECORDING_ID: &str = "kalman_loop1";
 
 struct Options {
     replay_dir: PathBuf,
     rrd_path: PathBuf,
     /// Sleep so sim time advances like wall-clock time.
     realtime: bool,
+    tuning: FilterTuning,
 }
 
 fn main() -> ExitCode {
@@ -50,12 +55,19 @@ fn parse_args(args: impl Iterator<Item = String>) -> Result<Option<Options>, Str
         replay_dir: PathBuf::from("sim/out/baseline"),
         rrd_path: PathBuf::from("report/out/loop1/loop1.rrd"),
         realtime: false,
+        tuning: FilterTuning::default(),
     };
     let mut args = args.peekable();
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "-h" | "--help" => return Ok(None),
             "--realtime" => options.realtime = true,
+            "--q" => {
+                let value = args.next().ok_or("--q needs a value")?;
+                options.tuning.acceleration_noise_density = value
+                    .parse()
+                    .map_err(|_| format!("--q: not a number: {value}"))?;
+            }
             "--save" => options.rrd_path = args.next().ok_or("--save needs a path")?.into(),
             flag if flag.starts_with('-') => return Err(format!("unknown flag {flag}")),
             dir => options.replay_dir = dir.into(),
@@ -70,20 +82,22 @@ fn run(options: &Options) -> Result<(), Box<dyn Error>> {
     let truth = load_ground_truth(&options.replay_dir)?;
 
     let rec = connect(&options.rrd_path)?;
-    log::static_context(&rec, &truth)?;
+    blueprint::send(&rec)?;
+    log::static_context(&rec, &truth, meta.noise_std_m)?;
+    let mut logger = log::RunLogger::new(&rec, options.tuning.acceleration_noise_density)?;
 
     let started = Instant::now();
     let mut first_log_error = None;
     run_filter(
         &sensor,
         meta.noise_std_m,
-        &FilterTuning::default(),
+        &options.tuning,
         |sample, estimate| {
             if options.realtime {
                 wait_until(started, estimate.timestamp);
             }
             let reference = truth_at(&truth, estimate.timestamp);
-            if let Err(error) = log::step(&rec, sample, estimate, reference) {
+            if let Err(error) = logger.step(sample, estimate, reference) {
                 first_log_error.get_or_insert(error);
             }
         },
@@ -94,7 +108,7 @@ fn run(options: &Options) -> Result<(), Box<dyn Error>> {
     }
 
     rec.flush_blocking()?;
-    println!("saved {}", options.rrd_path.display());
+    println!("{}: saved {}", logger.label(), options.rrd_path.display());
     Ok(())
 }
 
@@ -103,7 +117,9 @@ fn connect(rrd_path: &std::path::Path) -> Result<rerun::RecordingStream, Box<dyn
     if let Some(parent) = rrd_path.parent() {
         std::fs::create_dir_all(parent)?;
     }
-    let rec = rerun::RecordingStreamBuilder::new("kalman_loop1").buffered()?;
+    let rec = rerun::RecordingStreamBuilder::new("kalman_loop1")
+        .recording_id(RECORDING_ID)
+        .buffered()?;
     rerun::spawn(&rerun::SpawnOptions::default())?;
     rec.set_sinks((GrpcSink::default(), FileSink::new(rrd_path)?));
     Ok(rec)
